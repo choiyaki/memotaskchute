@@ -4,18 +4,7 @@ var app = express();
 app.set('port', (process.env.PORT || 5000));
 
 app.get('/', function(request, response) {
-  console.log("Hello World!!");
-  response.writeHead(200, {'Content-Type': 'text/plain'});
-  response.end('Hello World!!\n');
-  
-  
-});
-
-app.listen(app.get('port'), function() {
-  console.log('HellowWorld app is running on port', app.get('port'));
-});
-
-//１:モジュールのロード
+  //１:モジュールのロード
 const http = require('http');
 const fs = require('fs');
 
@@ -33,3 +22,16 @@ const server = http.createServer((req,res)=>{
 //４:待ち受け開始
 server.listen(3000);
 console.log('Server running');
+
+  
+  
+  console.log("Hello World!!");
+  response.writeHead(200, {'Content-Type': 'text/plain'});
+  response.end('Hello World!!\n');
+  
+  
+});
+
+app.listen(app.get('port'), function() {
+  console.log('HellowWorld app is running on port', app.get('port'));
+});
