@@ -4,7 +4,11 @@ var app = express();
 app.set('port', (process.env.PORT || 5000));
 
 app.get('/', function(request, response) {
-  //１:モジュールのロード
+  console.log("Hello World!!");
+  response.writeHead(200, {'Content-Type': 'text/plain'});
+  
+  
+    //１:モジュールのロード
 const http = require('http');
 const fs = require('fs');
 
@@ -23,12 +27,10 @@ const server = http.createServer((req,res)=>{
 server.listen(3000);
 console.log('Server running');
 
-  
-  
-  console.log("Hello World!!");
-  response.writeHead(200, {'Content-Type': 'text/plain'});
-  response.end('Hello heroku!!\n');
-  
+
+
+
+response.end(/*'Hello heroku!!\n'*/);
   
 });
 
