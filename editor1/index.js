@@ -7,13 +7,14 @@ const fs = require('fs');
 
 app.set('port', (process.env.PORT || 5000));
 
-app.get('/', function(){/*request, response) {
+app.get('/', /*function(request, response) {
   console.log("Hello World!!");
   response.writeHead(200, {'Content-Type': 'text/plain'});*/
 
 
 //２:サーバーオブジェクトの作成
 const server = http.createServer((req,res)=>{
+console.log('Server beginning');
   //３:ファイル読み込み
   fs.readFile('index.html','UTF-8',
   (error, data)=>{
