@@ -3,11 +3,11 @@ var app = express();
 
 app.set('port', (process.env.PORT || 5000));
 
-app.get('/', function(request, response) {
+app.get('/', function(){/*request, response) {
   console.log("Hello World!!");
-  response.writeHead(200, {'Content-Type': 'text/plain'});
+  response.writeHead(200, {'Content-Type': 'text/plain'});*/
   
-  
+ 
     //１:モジュールのロード
 const http = require('http');
 const fs = require('fs');
@@ -29,8 +29,7 @@ console.log('Server running');
 
 
 
-
-response.end(/*'Hello heroku!!\n'*/);
+//response.end(/*'Hello heroku!!\n'*/);
   
 });
 
