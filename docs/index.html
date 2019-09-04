@@ -49,7 +49,7 @@
 	<table style="width:100%; padding-top:10px">
 		<th><div class="calendar" style="color: lightgray; font-size: 20px"><i class="fas fa-calendar-alt"></i></div></th>
 		<th><div class="yesterday" style="color: lightgray;" onclick="testfunc()">◀︎</div></th>
-		<th><div class="today" style="color: white; font-family: Helvetica">2019/10/01</div></th>
+		<th><div class="today" id="hiduke" style="color: white; font-family: Helvetica">2019/10/01</div></th>
 		<th><div class="tomorrow" style="color: lightgray;">▶︎</div></th>
 		<th><div class="share" style="font-size: 20px; color: lightgray"><i class="fas fa-share-alt" onclick="allselect()"></i></div></th>
 	</table>
@@ -81,7 +81,9 @@
 <div class="keys" id="keys">
 	<table style="width:100%; padding-top:2px; font-size: 22px">
 		<th align="left"><div class="yesterday" style="color: white; padding-left: 10px;" onclick="testfunc()"><i class="fas fa-cog"></i></div></th>
-		<th align="right"><div class="yesterday" style="color: white; align: " onclick="testfunc()">▶︎</div></th>
+		<th><div class="up" style="color: white; align: " onclick="selectLineUp()">⬆︎</div></th>
+		<th><div class="down" style="color: white; align: " onclick="selectLineDown()">⬇︎</div></th>
+		<th align="right"><div class="yesterday" style="color: white; padding-right: 10px;" onclick="testfunc()">▶︎</div></th>
 	</table>
 </div>
 	<script type="text/javascript" src="js/shortcuts.js"></script>

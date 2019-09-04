@@ -1,3 +1,20 @@
+function getNow() {
+	var now = new Date();
+	var year = now.getFullYear();
+	var mon = now.getMonth()+1; //１を足すこと
+	var day = now.getDate();
+	var hour = now.getHours();
+	var min = now.getMinutes();
+	var sec = now.getSeconds();
+
+	//出力用
+	var today = year + "/" + mon + "/" + day
+	document.getElementById( "hiduke" ).innerHTML = today ;
+	return today;
+	
+}
+
+
 
 //　ローカルストレージからフォームにデータを戻す
 document.getElementById("textarea").value = window.localStorage.getItem("textarea") || "";
@@ -40,4 +57,81 @@ function allselect() {
 	var textarea = document.getElementById('textarea');
 	textarea.focus();
 	textarea.setSelectionRange(0 ,textarea.value.length);
+}
+
+//選択範囲の行を下に移動するfanc
+function selectLineDown(){
+	var textarea = document.getElementById('textarea');
+	var textlines = textarea.value.split(/\n/);
+	var start = textarea.selectionStart;
+	var end = textarea.selectionEnd;
+	var startlinenum = 0;
+	var num = 0;
+	for (i=0;i<textlines.length;i++){
+		if(start>num-1){
+			num = num+textlines[i].length+1;
+			startlinenum++;
+		}
+	}
+	var endlinenum = 0;
+	var num = 0;
+	for (i=0;i<textlines.length;i++){
+		if(end>num-1){
+			num = num+textlines[i].length+1;
+			endlinenum++;
+		}
+	}
+	//alert(textlines[startlinenum]+" , "+textlines[endlinenum]);
+	var temp = textlines[endlinenum];
+	if(temp === void 0){
+		textarea.setSelectionRange(start+1 ,end);
+		//textarea.setSelectionRange(start ,end);
+	}else{
+		var templength = temp.length;
+		for(i=0;i<endlinenum-startlinenum+1;i++){
+			textlines[endlinenum-i]=textlines[endlinenum-1-i];
+			textlines[endlinenum-1-i]=temp;
+		}
+		textarea.value = textlines.join("\n");
+		textarea.setSelectionRange(start+templength+1 ,end+templength+1);
+	}
+}
+
+//選択範囲の行を上に移動するfanc
+function selectLineUp(){
+	var textarea = document.getElementById('textarea');
+	
+	//ーーtextareaを受け取って、[textlines,start,end,startlinenum,endlinenum]を返す関数ーー
+	var textlines = textarea.value.split(/\n/);
+	var start = textarea.selectionStart;
+	var end = textarea.selectionEnd;
+	var startlinenum = 0;
+	var num = 0;
+	for (i=0;i<textlines.length;i++){
+		if(start>num-1){
+			num = num+textlines[i].length+1;
+			startlinenum++;
+		}
+	}
+	var endlinenum = 0;
+	var num = 0;
+	for (i=0;i<textlines.length;i++){
+		if(end>num-1){
+			num = num+textlines[i].length+1;
+			endlinenum++;
+		}
+	}
+
+	var temp = textlines[startlinenum-2];
+	if(temp === void 0){
+		textarea.setSelectionRange(start+1 ,end);
+	}else{
+		var templength = temp.length;
+		for(i=0;i<endlinenum-startlinenum+1;i++){
+			textlines[startlinenum-2+i]=textlines[startlinenum-1+i];
+			textlines[startlinenum-1+i]=temp;
+		}
+		textarea.value = textlines.join("\n");
+		textarea.setSelectionRange(start-templength-1 ,end-templength-1);
+	}
 }
