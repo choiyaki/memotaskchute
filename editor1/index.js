@@ -19,7 +19,7 @@ app.get('/', function(req, res) {
         res.end();
     });
 });
-server.listen(ポート番号, ホスト名);
+//server.listen(ポート番号, ホスト名);
 console.log('server listening ...');
 
 
