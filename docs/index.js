@@ -8,7 +8,7 @@ var server = http.createServer();
 app.set('port', (process.env.PORT || 5000));
 
 app.get('/', function(req, res) {
-    fs.readFile('./editor1.html', 'utf-8', function(err, data) {
+    fs.readFile('./index.html', 'utf-8', function(err, data) {
         if (err) {
             res.writeHead(404, {'Content-Type': 'text/plain'});
             res.write('not found!');
