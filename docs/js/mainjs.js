@@ -13,16 +13,16 @@ function getNow() {
 	
 }
 
-
-
 //　ローカルストレージからフォームにデータを戻す
 document.getElementById("textarea").value = window.localStorage.getItem("textarea") || "";
 
+
 //textareaの自動調整
 const sampleTextarea = document.querySelector('textarea');
+sampleTextarea.style.height = sampleTextarea.scrollHeight + "px";
 sampleTextarea.addEventListener('input', () => {
-  sampleTextarea.style.height = "100px";
-  sampleTextarea.style.height = sampleTextarea.scrollHeight + "px";
+	sampleTextarea.style.height = "100px";
+	sampleTextarea.style.height = sampleTextarea.scrollHeight + "px";
 })
 
 //下部ボタンの位置調整
@@ -38,9 +38,11 @@ function testfunc(){
 	alert(window.pageYOffset);
 }
 
-//行頭にチェックボックスをつける
+//行頭にチェックボックスを追加
 function checkbox(){
-	var textarea = document.getElementById('textarea');
+		var textarea = document.getElementById('textarea');
+	
+	//ーーtextareaを受け取って、[textlines,start,end,startlinenum,endlinenum]を返す関数ーー
 	var textlines = textarea.value.split(/\n/);
 	var start = textarea.selectionStart;
 	var end = textarea.selectionEnd;
@@ -60,15 +62,65 @@ function checkbox(){
 			endlinenum++;
 		}
 	}
-	/*
-	for(i=startlinenum; i<=endlinenum ;i++){
-		textlines[i].value = "□" + textlines[i].value;
+	for(i=startlinenum-1 ; i<=endlinenum-1 ; i++){
+		const checkbox = /^◻️/;
+		const check1 = /^✔︎/;
+		const check2 = /^✅/;
+		if(checkbox.test(textlines[i])==true||check1.test(textlines[i])==true||check2.test(textlines[i])==true){
+			textarea.setSelectionRange(start ,end);
+		}else{
+			textlines[i] = "◻️" + textlines[i];
+			textarea.value = textlines.join("\n");
+			textarea.setSelectionRange(start+1 ,end+(endlinenum-startlinenum)+1);
+		}
 	}
-	*/
-	textlines[1].value = "□" + textlines[1].value;
-	textarea.value = textlines.join("\n");
-	textarea.setSelectionRange(start+1,end+1);
 }
+//行頭にチェックマークを追加
+function check(){
+		var textarea = document.getElementById('textarea');
+	
+	//ーーtextareaを受け取って、[textlines,start,end,startlinenum,endlinenum]を返す関数ーー
+	var textlines = textarea.value.split(/\n/);
+	var start = textarea.selectionStart;
+	var end = textarea.selectionEnd;
+	var startlinenum = 0;
+	var num = 0;
+	for (i=0;i<textlines.length;i++){
+		if(start>num-1){
+			num = num+textlines[i].length+1;
+			startlinenum++;
+		}
+	}
+	var endlinenum = 0;
+	var num = 0;
+	for (i=0;i<textlines.length;i++){
+		if(end>num-1){
+			num = num+textlines[i].length+1;
+			endlinenum++;
+		}
+	}
+	for(i=startlinenum-1 ; i<=endlinenum-1 ; i++){
+		const checkbox = /^◻️/;
+		if(checkbox.test(textlines[i])==true){
+			textlines[i] = textlines[i].replace("◻️","✅");
+			textarea.value = textlines.join("\n");
+			textarea.setSelectionRange(start ,end);
+		}else{
+			const check1 = /^✔︎/;
+			const check2 = /^✅/;
+			if(check1.test(textlines[i])==true||check2.test(textlines[i])==true){
+				textarea.setSelectionRange(start ,end);
+			}else{
+				textlines[i] = "✔︎" + textlines[i];
+				textarea.value = textlines.join("\n");
+				textarea.setSelectionRange(start+1 ,end+(endlinenum-startlinenum)+1);
+			}
+		}
+	}
+}
+
+
+
 
 //自動保存機能
 //テキストを定める
@@ -84,7 +136,6 @@ setInterval(function (){
 	}
 },2000);
 
-//共有するために、すべての行を選択
 function allselect() {
 	var textarea = document.getElementById('textarea');
 	textarea.focus();
@@ -113,6 +164,7 @@ function selectLineDown(){
 			endlinenum++;
 		}
 	}
+	//alert(textlines[startlinenum]+" , "+textlines[endlinenum]);
 	var temp = textlines[endlinenum];
 	if(temp === void 0){
 		textarea.setSelectionRange(start+1 ,end);
