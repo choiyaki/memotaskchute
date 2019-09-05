@@ -37,8 +37,37 @@ window.addEventListener('scroll',function() {
 function testfunc(){
 	alert(window.pageYOffset);
 }
-function checkbox(){
 
+//行頭にチェックボックスをつける
+function checkbox(){
+	var textarea = document.getElementById('textarea');
+	var textlines = textarea.value.split(/\n/);
+	var start = textarea.selectionStart;
+	var end = textarea.selectionEnd;
+	var startlinenum = 0;
+	var num = 0;
+	for (i=0;i<textlines.length;i++){
+		if(start>num-1){
+			num = num+textlines[i].length+1;
+			startlinenum++;
+		}
+	}
+	var endlinenum = 0;
+	var num = 0;
+	for (i=0;i<textlines.length;i++){
+		if(end>num-1){
+			num = num+textlines[i].length+1;
+			endlinenum++;
+		}
+	}
+	/*
+	for(i=startlinenum; i<=endlinenum ;i++){
+		textlines[i].value = "□" + textlines[i].value;
+	}
+	*/
+	textlines[1].value = "□" + textlines[1].value;
+	textarea.value = textlines.join("\n");
+	textarea.setSelectionRange(start+1,end+1);
 }
 
 //自動保存機能
@@ -55,6 +84,7 @@ setInterval(function (){
 	}
 },2000);
 
+//共有するために、すべての行を選択
 function allselect() {
 	var textarea = document.getElementById('textarea');
 	textarea.focus();
@@ -83,7 +113,6 @@ function selectLineDown(){
 			endlinenum++;
 		}
 	}
-	//alert(textlines[startlinenum]+" , "+textlines[endlinenum]);
 	var temp = textlines[endlinenum];
 	if(temp === void 0){
 		textarea.setSelectionRange(start+1 ,end);
