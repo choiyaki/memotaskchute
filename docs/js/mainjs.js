@@ -1,3 +1,5 @@
+
+
 function getNow() {
 	var now = new Date();
 	var year = now.getFullYear();
@@ -69,7 +71,7 @@ function checkbox(){
 		if(checkbox.test(textlines[i])==true||check1.test(textlines[i])==true||check2.test(textlines[i])==true){
 			textarea.setSelectionRange(start ,end);
 		}else{
-			textlines[i] = "◻️" + textlines[i] + "@ +";
+			textlines[i] = "◻️" + textlines[i] + " @ #";
 			textarea.value = textlines.join("\n");
 			textarea.setSelectionRange(start+1 ,end+(endlinenum-startlinenum)+1);
 		}
