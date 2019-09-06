@@ -1,23 +1,36 @@
 
-
+//日付や時間の情報
 function getNow() {
 	var now = new Date();
 	var year = now.getFullYear();
-	var mon = now.getMonth()+1; //１を足すこと
-	var day = now.getDate();
+	var mon = ("0"+(now.getMonth() + 1)).slice(-2); //１を足すこと
+	var day = ("0"+(now.getDate())).slice(-2);
 	var hour = now.getHours();
 	var min = now.getMinutes();
 
 	//出力用
-	var today = year + "/" + mon + "/" + day
-	document.getElementById( "hiduke" ).innerHTML = today ;
-	return today;
-	
+	document.getElementById( "hiduke" ).innerHTML = year + "/" + mon + "/" + day;
+	document.getElementById("nowtime").innerHTML="現在 " + hour + "時" + min + "分";
+
+	return now;
 }
 
 //　ローカルストレージからフォームにデータを戻す
 document.getElementById("textarea").value = window.localStorage.getItem("textarea") || "";
+getNow();
 
+if(alltasktime("✅")[0]==undefined){
+	
+}else{
+	document.getElementById("donetask").innerHTML = Math.floor(alltasktime("✅")[1]/60) + "h" + ("0"+(alltasktime("✅")[1] % 60)).slice(-2) + "m";
+	document.getElementById("donetasknum").innerHTML = "✅：" + alltasktime("✅")[0];
+}
+if(alltasktime("◻️")==undefined){
+
+}else{
+	document.getElementById("alltasktime").innerHTML = Math.floor(alltasktime("◻️")[1]/60) + "h" + ("0"+(alltasktime("◻️")[1] % 60)).slice(-2) + "m";
+	document.getElementById("tasknum").innerHTML = "◻️：" + alltasktime("◻️")[0];
+}
 
 //textareaの自動調整
 const sampleTextarea = document.querySelector('textarea');
@@ -27,14 +40,7 @@ sampleTextarea.addEventListener('input', () => {
 	sampleTextarea.style.height = sampleTextarea.scrollHeight + "px";
 })
 
-//下部ボタンの位置調整
-/*
-window.addEventListener('scroll',function() {
-	var keysP = document.getElementById("keys");
-	keysP.style.position = "absolute";
-	keysP.style.paddingTop = (window.pageYOffset+300)+"px";
-});
-*/
+
 
 function testfunc(){
 	alert(window.pageYOffset);
@@ -71,11 +77,16 @@ function checkbox(){
 		if(checkbox.test(textlines[i])==true||check1.test(textlines[i])==true||check2.test(textlines[i])==true){
 			textarea.setSelectionRange(start ,end);
 		}else{
-			textlines[i] = "◻️" + textlines[i] + " @ #";
+			textlines[i] = "◻️m【" + textlines[i] + "】 @ #";
 			textarea.value = textlines.join("\n");
-			textarea.setSelectionRange(start+1 ,end+(endlinenum-startlinenum)+1);
 		}
 	}
+	var selecttop = 0;
+	for(i=0;i<startlinenum-1;i++){
+		selecttop = selecttop + (textlines[i].length +1);
+	}
+	alert(selecttop);
+	textarea.setSelectionRange(selecttop+1 ,selecttop+1);
 }
 //行頭にチェックマークを追加
 function check(){
@@ -126,13 +137,42 @@ function check(){
 	}
 }
 
-
-
+//タスクの見積もり時間や実績時間を計算して返すfunc
+function alltasktime(checkbox){
+	var now = getNow();
+	
+	var textareatext = document.getElementById("textarea").value;
+	var myregex = new RegExp(checkbox+"\[0-9\]\+m", "g");
+	var tasks = textareatext.match(myregex);
+	//alert(textareatext);
+	if(tasks==null){
+	
+	}else{
+		for(i=0;i<tasks.length;i++){
+			tasks[i] = tasks[i].replace(checkbox,"").replace("m","");
+			tasks[i] = Number(tasks[i]);
+		}
+		function sum(array) {
+			// 合計を格納する変数
+			var sum = 0;
+			// 配列の長さまで
+			for(var i = 0; i < array.length; i++) {
+			// ひとつずつ足していく
+			sum += array[i];
+			}
+			// 結果を返却
+			return sum;
+		}
+		var alltasktime = [tasks.length,sum(tasks)];
+		return alltasktime;
+	}
+}
 
 //自動保存機能
 //テキストを定める
 //一定時間ごとに、テキストの変更があったかどうか確認する
 setInterval(function (){
+	getNow();
 	var text = window.localStorage.getItem("textarea");
 	var newtext = document.getElementById("textarea").value;
 		if(text === newtext){
@@ -140,6 +180,11 @@ setInterval(function (){
 		}else{
 			//違ったら保存して、テキストを新しいものに書き換え
 			window.localStorage.setItem("textarea", newtext);
+			//タスクを計測し直す
+			document.getElementById("alltasktime").innerHTML = Math.floor(alltasktime("◻️")[1]/60) + "h" + ("0"+(alltasktime("◻️")[1] % 60)).slice(-2) + "m";
+			document.getElementById("tasknum").innerHTML = "◻️：" + alltasktime("◻️")[0];
+			document.getElementById("donetask").innerHTML = Math.floor(alltasktime("✅")[1]/60) + "h" + ("0"+(alltasktime("✅")[1] % 60)).slice(-2) + "m";
+			document.getElementById("donetasknum").innerHTML = "✅：" + alltasktime("✅")[0];
 	}
 },2000);
 

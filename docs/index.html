@@ -57,13 +57,13 @@
 <div id="taskchute" style="font-size: 12px; font-family: Helvetica; padding: 5px;">
 <table border="1px" width="100%" height="70" frame="void" style="border-collapse: collapse;">
     <tr align="center">
-      <td>✅：00</td>
-      <td>00h00m</td>
-      <td>現在 00時00分</td>
+      <td id="donetasknum">✅：--</td>
+      <td id="donetask">--h--m</td>
+      <td id="nowtime">現在 00時00分</td>
     </tr>
     <tr align="center">
-      <td>◻️：00</td>
-      <td>00h00m</td>
+      <td id="tasknum">◻️：--</td>
+      <td id="alltasktime">--h--m</td>
       <td rowspan=2><strong>終了予定<br>22時22分</strong></td>
     </tr>
    
@@ -86,7 +86,7 @@
 		)"><i class="fas fa-check"></i></div></th>
 		<th><div class="up" style="color: white;" onclick="selectLineUp()">⬆︎</div></th>
 		<th><div class="down" style="color: white;" onclick="selectLineDown()">⬇︎</div></th>
-		<th align="right"><div class="yesterday" style="color: white; padding-right: 10px;" onclick="testfunc()">▶︎</div></th>
+		<th align="right"><div class="yesterday" style="color: white; padding-right: 10px;" onclick="alltasktime()">▶︎</div></th>
 	</table>
 </div>
 	<script type="text/javascript" src="js/shortcuts.js"></script>
