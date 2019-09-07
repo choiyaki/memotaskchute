@@ -3,23 +3,26 @@
 function getNow() {
 	var now = new Date();
 	var year = now.getFullYear();
-	var mon = ("0"+(now.getMonth() + 1)).slice(-2); //１を足すこと
-	var day = ("0"+(now.getDate())).slice(-2);
+	var mon = now.getMonth() + 1; //１を足すこと
+	var day = now.getDate();
 	var hour = now.getHours();
 	var min = now.getMinutes();
 
 	//出力用
-	document.getElementById( "hiduke" ).innerHTML = year + "/" + mon + "/" + day;
-	document.getElementById("nowtime").innerHTML="現在 " + hour + "時" + min + "分";
+	document.getElementById( "hiduke" ).innerHTML = year + "/" + pluszero(mon) + "/" + pluszero(day);
+	document.getElementById("nowtime").innerHTML="現在 " + pluszero(hour) + "時" + pluszero(min) + "分";
 
-	return now;
+	return [year,mon,day,hour,min];
+}
+function pluszero(num){
+	var num = ("0"+(num)).slice(-2);
+	return num;
 }
 
 //　ローカルストレージからフォームにデータを戻す
 document.getElementById("textarea").value = window.localStorage.getItem("textarea") || "";
-getNow();
-
-if(alltasktime("✅")[0]==undefined){
+var now = getNow();
+if(alltasktime("✅")==undefined){
 	
 }else{
 	document.getElementById("donetask").innerHTML = Math.floor(alltasktime("✅")[1]/60) + "h" + ("0"+(alltasktime("✅")[1] % 60)).slice(-2) + "m";
@@ -28,8 +31,12 @@ if(alltasktime("✅")[0]==undefined){
 if(alltasktime("◻️")==undefined){
 
 }else{
-	document.getElementById("alltasktime").innerHTML = Math.floor(alltasktime("◻️")[1]/60) + "h" + ("0"+(alltasktime("◻️")[1] % 60)).slice(-2) + "m";
-	document.getElementById("tasknum").innerHTML = "◻️：" + alltasktime("◻️")[0];
+	var tasktime = alltasktime("◻️");
+	document.getElementById("alltasktime").innerHTML = Math.floor(tasktime[1]/60) + "h" + ("0"+(tasktime[1] % 60)).slice(-2) + "m";
+	document.getElementById("tasknum").innerHTML = "◻️：" + tasktime[0];
+	var now = getNow();
+	var timesum = now[3]*60+now[4]+tasktime[1];
+	document.getElementById("endtime").innerHTML = "終了予定<br>"+(Math.floor(timesum/60)) + "時"+pluszero(timesum%60)+"分";
 }
 
 //textareaの自動調整
@@ -85,7 +92,6 @@ function checkbox(){
 	for(i=0;i<startlinenum-1;i++){
 		selecttop = selecttop + (textlines[i].length +1);
 	}
-	alert(selecttop);
 	textarea.setSelectionRange(selecttop+1 ,selecttop+1);
 }
 //行頭にチェックマークを追加
@@ -181,10 +187,14 @@ setInterval(function (){
 			//違ったら保存して、テキストを新しいものに書き換え
 			window.localStorage.setItem("textarea", newtext);
 			//タスクを計測し直す
-			document.getElementById("alltasktime").innerHTML = Math.floor(alltasktime("◻️")[1]/60) + "h" + ("0"+(alltasktime("◻️")[1] % 60)).slice(-2) + "m";
-			document.getElementById("tasknum").innerHTML = "◻️：" + alltasktime("◻️")[0];
 			document.getElementById("donetask").innerHTML = Math.floor(alltasktime("✅")[1]/60) + "h" + ("0"+(alltasktime("✅")[1] % 60)).slice(-2) + "m";
 			document.getElementById("donetasknum").innerHTML = "✅：" + alltasktime("✅")[0];
+				var now = getNow();
+				var tasktime = alltasktime("◻️");
+				var timesum = now[3]*60+now[4]+tasktime[1];
+				document.getElementById("endtime").innerHTML = "終了予定<br>"+(Math.floor(timesum/60)) + "時"+(pluszero(timesum%60))+"分";
+				document.getElementById("alltasktime").innerHTML = Math.floor(tasktime[1]/60) + "h" + ("0"+(tasktime[1] % 60)).slice(-2) + "m";
+				document.getElementById("tasknum").innerHTML = "◻️：" + tasktime[0];
 	}
 },2000);
 
