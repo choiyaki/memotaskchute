@@ -75,7 +75,11 @@ if(alltasktime("◻️")==undefined){
 	var now = getNow();
 	var timesum = now[3]*60+now[4]+tasktime[1];
 	document.getElementById("endtime").innerHTML = "<b>終了予定<br>"+(Math.floor(timesum/60)) + "時"+pluszero(timesum%60)+"分</b>";
-	var doingdata = doingtask();
+}
+if(doingtask()==undefined){
+
+}else{
+	var doingdata =doingtask();
 	document.getElementById("doingdata").innerHTML = doingdata[0]+"m\/"+doingdata[1]+"m";
 }
 
@@ -303,16 +307,28 @@ setInterval(function (){
 		//違ったら保存して、テキストを新しいものに書き換え
 		window.localStorage.setItem("textarea", newtext);
 		//タスクを計測し直す
+		if(alltasktime("✅")== undefined){
+		
+		}else{
 		document.getElementById("donetask").innerHTML = Math.floor(alltasktime("✅")[1]/60) + "h" + ("0"+(alltasktime("✅")[1] % 60)).slice(-2) + "m";
 		document.getElementById("donetasknum").innerHTML = "✅：" + alltasktime("✅")[0];
+		}
 		var now = getNow();
+		if(alltasktime("◻️")== undefined){
+		
+		}else{
 		var tasktime = alltasktime("◻️");
 		var timesum = now[3]*60+now[4]+tasktime[1];
 		document.getElementById("endtime").innerHTML = "<b>終了予定<br>"+(Math.floor(timesum/60)) + "時"+(pluszero(timesum%60))+"分</b>";
 		document.getElementById("alltasktime").innerHTML = Math.floor(tasktime[1]/60) + "h" + ("0"+(tasktime[1] % 60)).slice(-2) + "m";
 		document.getElementById("tasknum").innerHTML = "◻️：" + tasktime[0];
+		}
 		var doingdata = doingtask();
+		if(doingdata== undefined){
+		
+		}else{
 		document.getElementById("doingdata").innerHTML = doingdata[0]+"m\/"+doingdata[1]+"m";
+		}
 	}
 },2000);
 function doingtask(){
@@ -328,6 +344,9 @@ function doingtask(){
 			doinglinenum++;
 		}
 	}
+	if(doinglinenum==0){
+	
+	}else{
 	var doingpos = textlines[doinglinenum-1].indexOf("▶️");
 	var mitumorimpos = textlines[doinglinenum-1].indexOf("m ");
 	var mitumori = textlines[doinglinenum-1].substr(doingpos+1, mitumorimpos-1);
@@ -336,6 +355,7 @@ function doingtask(){
 	var jikkouchu = (now[3]*60+now[4])-(kaishih*60+kaishim)
 	var doingdata = [jikkouchu,mitumori];
 	return doingdata;
+	}
 }
 
 
