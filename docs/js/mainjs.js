@@ -1,3 +1,16 @@
+shortcut.add("Ctrl+2",function(){
+	selectLineDown();
+});
+shortcut.add("Ctrl+1",function(){
+	selectLineUp();
+});
+shortcut.add("Ctrl+0",function(){
+	check();
+});
+shortcut.add("Ctrl+9",function(){
+	checkbox();
+});
+
 //ーーtextareaを受け取って、[textlines,start,end,startlinenum,endlinenum]を返す関数ーー
 function textData(textarea){
 	var textlines = textarea.value.split(/\n/);
@@ -62,6 +75,8 @@ if(alltasktime("◻️")==undefined){
 	var now = getNow();
 	var timesum = now[3]*60+now[4]+tasktime[1];
 	document.getElementById("endtime").innerHTML = "<b>終了予定<br>"+(Math.floor(timesum/60)) + "時"+pluszero(timesum%60)+"分</b>";
+	var doingdata = doingtask();
+	document.getElementById("doingdata").innerHTML = doingdata[0]+"m\/"+doingdata[1]+"m";
 }
 
 //textareaの自動調整
@@ -104,7 +119,7 @@ function checkbox(){
 	}
 	textarea.setSelectionRange(selecttop+1 ,selecttop+1);
 }
-//行頭にチェックボックスをチェック
+//行頭のチェックボックスをチェック
 function check(){
 	var textarea = document.getElementById('textarea');
 	var textdata = textData(textarea);
@@ -128,8 +143,6 @@ function check(){
 			}
 			var endtimepos = textlines[donelinenum-1].indexOf("【");
 			var endtime = textlines[donelinenum-1].substr(endtimepos-5,5);
-			//var ehour = endtime.substr(0,2);
-			//var emin = endtime.substr(3,5);
 			var taskname = textlines[startlinenum-1].indexOf("【");
 			var taskproarea = textlines[startlinenum-1].substr(taskname);
 			var mitumori = textlines[startlinenum-1].substr(0,taskname-1);
@@ -138,12 +151,101 @@ function check(){
 			var cursorpos = textarea.value.indexOf("▶️")+mitumori.length+8;
 			textarea.setSelectionRange(cursorpos ,cursorpos);
 		}else{
-		
+			//実行中のタスク行の取得
+			var doingtask = textarea.value.lastIndexOf("▶️");
+			var doinglinenum = 0;
+			var num = 0;
+			for (i=0;i<textlines.length;i++){
+				if(doingtask>num-1){
+					num = num+textlines[i].length+1;
+					doinglinenum++;
+				}
+			}
+			//カーソル行はstartlinenum
+			
+			//終了時刻が入力されてるかどうか
+			if(textlines[doinglinenum-1].indexOf("-【")==-1){
+				//終了時刻が入力されていれば、
+				function chuudan(textline,doingline,startlinenum){
+				
+				}
+				var tasknamepos = textlines[doinglinenum-1].indexOf("【");
+				var tasknameend = textlines[doinglinenum-1].indexOf("】");
+				var mitumori = Number(textlines[doinglinenum-1].substr(0,tasknamepos-13).replace(/(.*?)▶️/,""));
+				var kaishih = Number(textlines[doinglinenum-1].substr(tasknamepos-11,2));
+				var kaishim = Number(textlines[doinglinenum-1].substr(tasknamepos-8,2));
+				var shuuryouh = Number(textlines[doinglinenum-1].substr(tasknamepos-5,2));
+				var shuuryoum = Number(textlines[doinglinenum-1].substr(tasknamepos-2,2));
+				var jisseki = (shuuryouh*60+shuuryoum)-(kaishih*60+kaishim);
+				var sabun = 0;
+				if(mitumori-jisseki<0){
+				}else{
+					sabun = mitumori-jisseki;
+				};
+				textlines[doinglinenum-1] = "⏸"+jisseki+"m\/"+ textlines[doinglinenum-1].substr(0,tasknameend).replace("▶️","")+"（中断）"+textlines[doinglinenum-1].substr(tasknameend)+"\n◻️"+sabun+"m"+textlines[doinglinenum-1].substr(tasknamepos-0,tasknameend-tasknamepos)+"（再開）"+textlines[doinglinenum-1].substr(tasknameend);
+				textarea.value = textlines.join("\n");
+				var startnamepos = textlines[startlinenum-1].indexOf("【");
+				textlines[startlinenum-1] = textlines[startlinenum-1].substr(0,startnamepos).replace("◻️","▶️")+" "+pluszero(shuuryouh)+":"+pluszero(shuuryoum)+"-"+textlines[startlinenum-1].substr(startnamepos);
+				textarea.value = textlines.join("\n");
+				var mitumoripos = textlines[startlinenum-1].substr(0,startnamepos-1);
+				var cursorpos = textarea.value.indexOf("▶️")+mitumoripos.length+8;
+				textarea.setSelectionRange(cursorpos ,cursorpos);
+			}else{
+				//書かれていなければ、まずは終了時刻を記入
+				var now = getNow();
+				//▶️20m 10:30-【タスク名がここに書かれます】@ +
+				var tasknamepos = textlines[doinglinenum-1].indexOf("【");
+				var tasknameend = textlines[doinglinenum-1].indexOf("】");
+				textlines[doinglinenum-1] = textlines[doinglinenum-1].substr(0,tasknamepos)+pluszero(now[3])+":"+pluszero(now[4])+textlines[doinglinenum-1].substr(tasknamepos);
+				//▶️20m 10:30-【タスク名がここに書かれます】@ +
+				var tasknamepos = textlines[doinglinenum-1].indexOf("【");
+				var tasknameend = textlines[doinglinenum-1].indexOf("】");
+				var mitumori = Number(textlines[doinglinenum-1].substr(0,tasknamepos-13).replace(/(.*?)▶️/,""));
+				var kaishih = Number(textlines[doinglinenum-1].substr(tasknamepos-11,2));
+				var kaishim = Number(textlines[doinglinenum-1].substr(tasknamepos-8,2));
+				var shuuryouh = Number(textlines[doinglinenum-1].substr(tasknamepos-5,2));
+				var shuuryoum = Number(textlines[doinglinenum-1].substr(tasknamepos-2,2));
+				var jisseki = (shuuryouh*60+shuuryoum)-(kaishih*60+kaishim);
+				var sabun = 0;
+				if(mitumori-jisseki<0){
+				}else{
+					sabun = mitumori-jisseki;
+				};
+				textlines[doinglinenum-1] = "⏸"+jisseki+"m\/"+ textlines[doinglinenum-1].substr(0,tasknameend).replace("▶️","")+"（中断）"+textlines[doinglinenum-1].substr(tasknameend)+"\n◻️"+sabun+"m"+textlines[doinglinenum-1].substr(tasknamepos-0,tasknameend-tasknamepos)+"（再開）"+textlines[doinglinenum-1].substr(tasknameend);
+				
+				var startnamepos = textlines[startlinenum-1].indexOf("【");
+				textlines[startlinenum-1] = textlines[startlinenum-1].substr(0,startnamepos).replace("◻️","▶️")+" "+pluszero(shuuryouh)+":"+pluszero(shuuryoum)+"-"+textlines[startlinenum-1].substr(startnamepos);
+				textarea.value = textlines.join("\n");
+				var mitumoripos = textlines[startlinenum-1].substr(0,startnamepos-1);
+				var cursorpos = textarea.value.indexOf("▶️")+mitumoripos.length+8;
+				textarea.setSelectionRange(cursorpos ,cursorpos);
+			}
 		}
-	}else if(doing.test(textlines[i])==true){
-		textlines[i] = textlines[i].replace("▶️","✅");
-		textarea.value = textlines.join("\n");
-		textarea.setSelectionRange(start + textlines[i].length ,end + textlines[i].length);
+	}else if(doing.test(textlines[startlinenum-1])==true){
+		if(textarea.value.indexOf("-【")==-1){
+			//あらかじめ記入されてる終了時刻と開始時刻から実績を計算して記入
+			var taskname = textlines[startlinenum-1].indexOf("【");
+			var shuryomin = textlines[startlinenum-1].substr(taskname-2,2);
+			var shuryoh = textlines[startlinenum-1].substr(taskname-5,2);
+			var kaishimin = textlines[startlinenum-1].substr(taskname-8,2);
+			var kaishih = textlines[startlinenum-1].substr(taskname-11,2);
+			var jisseki = (Number(shuryoh)*60+Number(shuryomin))-(Number(kaishih)*60+Number(kaishimin))
+			textlines[startlinenum-1] = "✅"+jisseki+"m/"+textlines[startlinenum-1].substr(taskname-15);
+			textarea.value = textlines.join("\n");
+			textarea.setSelectionRange(start + 4 ,end + 4);
+
+		}else{
+			//現在時刻を終了時刻欄に記入し、実績を計算して記入
+			var now = getNow();
+			var taskname = textlines[startlinenum-1].indexOf("【");
+			var kaishipos = textlines[startlinenum-1].indexOf("m ");
+			var kaishihour = Number(textlines[startlinenum-1].substr(kaishipos+2,2));
+			var kaishimin = Number(textlines[startlinenum-1].substr(kaishipos+5,2));
+			var jisseki = (now[3]*60+now[4])-(kaishihour*60+kaishimin);
+			textlines[startlinenum-1] = "✅"+jisseki+"m/"+textlines[startlinenum-1].substr(0,taskname).replace("▶️","")+pluszero(now[3])+":"+pluszero(now[4])+textlines[startlinenum-1].substr(taskname);
+			textarea.value = textlines.join("\n");
+			textarea.setSelectionRange(start + 9 ,end + 9);
+		}
 	}else{
 		const check1 = /^✔︎/;
 		const check2 = /^✅/;
@@ -209,8 +311,33 @@ setInterval(function (){
 		document.getElementById("endtime").innerHTML = "<b>終了予定<br>"+(Math.floor(timesum/60)) + "時"+(pluszero(timesum%60))+"分</b>";
 		document.getElementById("alltasktime").innerHTML = Math.floor(tasktime[1]/60) + "h" + ("0"+(tasktime[1] % 60)).slice(-2) + "m";
 		document.getElementById("tasknum").innerHTML = "◻️：" + tasktime[0];
+		var doingdata = doingtask();
+		document.getElementById("doingdata").innerHTML = doingdata[0]+"m\/"+doingdata[1]+"m";
 	}
 },2000);
+function doingtask(){
+	var textarea = document.getElementById('textarea');
+	var textdata = textData(textarea);
+	var textlines = textdata[0];
+	var doing = textarea.value.indexOf("▶️");
+	var doinglinenum = 0;
+	var num = 0;
+	for (i=0;i<textlines.length;i++){
+		if(doing>num-1){
+			num = num+textlines[i].length+1;
+			doinglinenum++;
+		}
+	}
+	var doingpos = textlines[doinglinenum-1].indexOf("▶️");
+	var mitumorimpos = textlines[doinglinenum-1].indexOf("m ");
+	var mitumori = textlines[doinglinenum-1].substr(doingpos+1, mitumorimpos-1);
+	var kaishih = Number(textlines[doinglinenum-1].substr(mitumorimpos+2,2));
+	var kaishim = Number(textlines[doinglinenum-1].substr(mitumorimpos+5,2));
+	var jikkouchu = (now[3]*60+now[4])-(kaishih*60+kaishim)
+	var doingdata = [jikkouchu,mitumori];
+	return doingdata;
+}
+
 
 //全てのテキストを選択 
 function allselect() {
@@ -294,9 +421,9 @@ document.addEventListener('keydown', e => {
   return false
 })
 
-window.addEventListener('scroll',function() {
-var header = document.getElementById("header");
-header.style.top = (window.pageYOffset)+"px";
-var taskchute = document.getElementById("taskchute");
-taskchute.style.top = (window.pageYOffset+50)+"px";
-});
+	window.addEventListener('scroll',function() {
+		var header = document.getElementById("header");
+		header.style.top = (window.pageYOffset)+"px";
+		var taskchute = document.getElementById("taskchute");
+		taskchute.style.top = (window.pageYOffset+50)+"px";
+	});
