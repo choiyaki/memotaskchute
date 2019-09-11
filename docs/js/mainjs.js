@@ -92,14 +92,9 @@ sampleTextarea.addEventListener('input', () => {
 })
 
 
-
-function testfunc(){
-	alert(window.pageYOffset);
-}
-
 //行頭にチェックボックスを追加
 function checkbox(){
-		var textarea = document.getElementById('textarea');
+	var textarea = document.getElementById('textarea');
 	var textdata = textData(textarea);
 	var textlines = textdata[0];
 	var start = textdata[1];
@@ -122,7 +117,15 @@ function checkbox(){
 		selecttop = selecttop + (textlines[i].length +1);
 	}
 	textarea.setSelectionRange(selecttop+1 ,selecttop+1);
+//alert("x="+caretPosition.left+" ,  y="+caretPosition.top);
+
 }
+function scrolltocaret(){
+	var textarea = document.getElementById('textarea');
+	var caretPosition = Measurement.caretPos(textarea);
+	scrollTo(0, caretPosition.top-300);
+}
+
 //行頭のチェックボックスをチェック
 function check(){
 	var textarea = document.getElementById('textarea');
@@ -135,94 +138,105 @@ function check(){
 	const checkbox = /^◻️/;
 	const doing = /^▶️/;
 	if(checkbox.test(textlines[startlinenum-1])==true){
-		if(textarea.value.indexOf("▶️")==-1){
-			var lastdonetask = textarea.value.lastIndexOf("✅");
-			var donelinenum = 0;
-			var num = 0;
-			for (i=0;i<textlines.length;i++){
-				if(lastdonetask>num-1){
-					num = num+textlines[i].length+1;
-					donelinenum++;
-				}
-			}
-			var endtimepos = textlines[donelinenum-1].indexOf("【");
-			var endtime = textlines[donelinenum-1].substr(endtimepos-5,5);
+		if(textarea.value.indexOf("✅")==-1){
+			var now = getNow();
 			var taskname = textlines[startlinenum-1].indexOf("【");
 			var taskproarea = textlines[startlinenum-1].substr(taskname);
 			var mitumori = textlines[startlinenum-1].substr(0,taskname-1);
-			textlines[startlinenum-1] = mitumori.replace("◻️","▶️") + "m " + endtime + "-" + taskproarea;
+			textlines[startlinenum-1] = mitumori.replace("◻️","▶️") + "m " + pluszero(now[3])+":"+pluszero(now[4]) + "-" + taskproarea;
 			textarea.value = textlines.join("\n");
 			var cursorpos = textarea.value.indexOf("▶️")+mitumori.length+8;
 			textarea.setSelectionRange(cursorpos ,cursorpos);
 		}else{
-			//実行中のタスク行の取得
-			var doingtask = textarea.value.lastIndexOf("▶️");
-			var doinglinenum = 0;
-			var num = 0;
-			for (i=0;i<textlines.length;i++){
-				if(doingtask>num-1){
-					num = num+textlines[i].length+1;
-					doinglinenum++;
+			if(textarea.value.indexOf("▶️")==-1){
+				var lastdonetask = textarea.value.lastIndexOf("✅");
+				var donelinenum = 0;
+				var num = 0;
+				for (i=0;i<textlines.length;i++){
+					if(lastdonetask>num-1){
+						num = num+textlines[i].length+1;
+						donelinenum++;
+					}
 				}
-			}
-			//カーソル行はstartlinenum
-			
-			//終了時刻が入力されてるかどうか
-			if(textlines[doinglinenum-1].indexOf("-【")==-1){
-				//終了時刻が入力されていれば、
-				function chuudan(textline,doingline,startlinenum){
-				
-				}
-				var tasknamepos = textlines[doinglinenum-1].indexOf("【");
-				var tasknameend = textlines[doinglinenum-1].indexOf("】");
-				var mitumori = Number(textlines[doinglinenum-1].substr(0,tasknamepos-13).replace(/(.*?)▶️/,""));
-				var kaishih = Number(textlines[doinglinenum-1].substr(tasknamepos-11,2));
-				var kaishim = Number(textlines[doinglinenum-1].substr(tasknamepos-8,2));
-				var shuuryouh = Number(textlines[doinglinenum-1].substr(tasknamepos-5,2));
-				var shuuryoum = Number(textlines[doinglinenum-1].substr(tasknamepos-2,2));
-				var jisseki = (shuuryouh*60+shuuryoum)-(kaishih*60+kaishim);
-				var sabun = 0;
-				if(mitumori-jisseki<0){
-				}else{
-					sabun = mitumori-jisseki;
-				};
-				textlines[doinglinenum-1] = "⏸"+jisseki+"m\/"+ textlines[doinglinenum-1].substr(0,tasknameend).replace("▶️","")+"（中断）"+textlines[doinglinenum-1].substr(tasknameend)+"\n◻️"+sabun+"m"+textlines[doinglinenum-1].substr(tasknamepos-0,tasknameend-tasknamepos)+"（再開）"+textlines[doinglinenum-1].substr(tasknameend);
+				var endtimepos = textlines[donelinenum-1].indexOf("【");
+				var endtime = textlines[donelinenum-1].substr(endtimepos-5,5);
+				var taskname = textlines[startlinenum-1].indexOf("【");
+				var taskproarea = textlines[startlinenum-1].substr(taskname);
+				var mitumori = textlines[startlinenum-1].substr(0,taskname-1);
+				textlines[startlinenum-1] = mitumori.replace("◻️","▶️") + "m " + endtime + "-" + taskproarea;
 				textarea.value = textlines.join("\n");
-				var startnamepos = textlines[startlinenum-1].indexOf("【");
-				textlines[startlinenum-1] = textlines[startlinenum-1].substr(0,startnamepos).replace("◻️","▶️")+" "+pluszero(shuuryouh)+":"+pluszero(shuuryoum)+"-"+textlines[startlinenum-1].substr(startnamepos);
-				textarea.value = textlines.join("\n");
-				var mitumoripos = textlines[startlinenum-1].substr(0,startnamepos-1);
-				var cursorpos = textarea.value.indexOf("▶️")+mitumoripos.length+8;
+				var cursorpos = textarea.value.indexOf("▶️")+mitumori.length+8;
 				textarea.setSelectionRange(cursorpos ,cursorpos);
 			}else{
-				//書かれていなければ、まずは終了時刻を記入
-				var now = getNow();
-				//▶️20m 10:30-【タスク名がここに書かれます】@ +
-				var tasknamepos = textlines[doinglinenum-1].indexOf("【");
-				var tasknameend = textlines[doinglinenum-1].indexOf("】");
-				textlines[doinglinenum-1] = textlines[doinglinenum-1].substr(0,tasknamepos)+pluszero(now[3])+":"+pluszero(now[4])+textlines[doinglinenum-1].substr(tasknamepos);
-				//▶️20m 10:30-【タスク名がここに書かれます】@ +
-				var tasknamepos = textlines[doinglinenum-1].indexOf("【");
-				var tasknameend = textlines[doinglinenum-1].indexOf("】");
-				var mitumori = Number(textlines[doinglinenum-1].substr(0,tasknamepos-13).replace(/(.*?)▶️/,""));
-				var kaishih = Number(textlines[doinglinenum-1].substr(tasknamepos-11,2));
-				var kaishim = Number(textlines[doinglinenum-1].substr(tasknamepos-8,2));
-				var shuuryouh = Number(textlines[doinglinenum-1].substr(tasknamepos-5,2));
-				var shuuryoum = Number(textlines[doinglinenum-1].substr(tasknamepos-2,2));
-				var jisseki = (shuuryouh*60+shuuryoum)-(kaishih*60+kaishim);
-				var sabun = 0;
-				if(mitumori-jisseki<0){
-				}else{
-					sabun = mitumori-jisseki;
-				};
-				textlines[doinglinenum-1] = "⏸"+jisseki+"m\/"+ textlines[doinglinenum-1].substr(0,tasknameend).replace("▶️","")+"（中断）"+textlines[doinglinenum-1].substr(tasknameend)+"\n◻️"+sabun+"m"+textlines[doinglinenum-1].substr(tasknamepos-0,tasknameend-tasknamepos)+"（再開）"+textlines[doinglinenum-1].substr(tasknameend);
+				//実行中のタスク行の取得
+				var doingtask = textarea.value.lastIndexOf("▶️");
+				var doinglinenum = 0;
+				var num = 0;
+				for (i=0;i<textlines.length;i++){
+					if(doingtask>num-1){
+						num = num+textlines[i].length+1;
+						doinglinenum++;
+					}
+				}
+				//カーソル行はstartlinenum
 				
-				var startnamepos = textlines[startlinenum-1].indexOf("【");
-				textlines[startlinenum-1] = textlines[startlinenum-1].substr(0,startnamepos).replace("◻️","▶️")+" "+pluszero(shuuryouh)+":"+pluszero(shuuryoum)+"-"+textlines[startlinenum-1].substr(startnamepos);
-				textarea.value = textlines.join("\n");
-				var mitumoripos = textlines[startlinenum-1].substr(0,startnamepos-1);
-				var cursorpos = textarea.value.indexOf("▶️")+mitumoripos.length+8;
-				textarea.setSelectionRange(cursorpos ,cursorpos);
+				//終了時刻が入力されてるかどうか
+				if(textlines[doinglinenum-1].indexOf("-【")==-1){
+					//終了時刻が入力されていれば、
+					function chuudan(textline,doingline,startlinenum){
+					
+					}
+					var tasknamepos = textlines[doinglinenum-1].indexOf("【");
+					var tasknameend = textlines[doinglinenum-1].indexOf("】");
+					var mitumori = Number(textlines[doinglinenum-1].substr(0,tasknamepos-13).replace(/(.*?)▶️/,""));
+					var kaishih = Number(textlines[doinglinenum-1].substr(tasknamepos-11,2));
+					var kaishim = Number(textlines[doinglinenum-1].substr(tasknamepos-8,2));
+					var shuuryouh = Number(textlines[doinglinenum-1].substr(tasknamepos-5,2));
+					var shuuryoum = Number(textlines[doinglinenum-1].substr(tasknamepos-2,2));
+					var jisseki = (shuuryouh*60+shuuryoum)-(kaishih*60+kaishim);
+					var sabun = 0;
+					if(mitumori-jisseki<0){
+					}else{
+						sabun = mitumori-jisseki;
+					};
+					textlines[doinglinenum-1] = "⏸"+jisseki+"m\/"+ textlines[doinglinenum-1].substr(0,tasknameend).replace("▶️","")+"（中断）"+textlines[doinglinenum-1].substr(tasknameend)+"\n◻️"+sabun+"m"+textlines[doinglinenum-1].substr(tasknamepos-0,tasknameend-tasknamepos)+"（再開）"+textlines[doinglinenum-1].substr(tasknameend);
+					textarea.value = textlines.join("\n");
+					var startnamepos = textlines[startlinenum-1].indexOf("【");
+					textlines[startlinenum-1] = textlines[startlinenum-1].substr(0,startnamepos).replace("◻️","▶️")+" "+pluszero(shuuryouh)+":"+pluszero(shuuryoum)+"-"+textlines[startlinenum-1].substr(startnamepos);
+					textarea.value = textlines.join("\n");
+					var mitumoripos = textlines[startlinenum-1].substr(0,startnamepos-1);
+					var cursorpos = textarea.value.indexOf("▶️")+mitumoripos.length+8;
+					textarea.setSelectionRange(cursorpos ,cursorpos);
+				}else{
+					//書かれていなければ、まずは終了時刻を記入
+					var now = getNow();
+					//▶️20m 10:30-【タスク名がここに書かれます】@ +
+					var tasknamepos = textlines[doinglinenum-1].indexOf("【");
+					var tasknameend = textlines[doinglinenum-1].indexOf("】");
+					textlines[doinglinenum-1] = textlines[doinglinenum-1].substr(0,tasknamepos)+pluszero(now[3])+":"+pluszero(now[4])+textlines[doinglinenum-1].substr(tasknamepos);
+					//▶️20m 10:30-【タスク名がここに書かれます】@ +
+					var tasknamepos = textlines[doinglinenum-1].indexOf("【");
+					var tasknameend = textlines[doinglinenum-1].indexOf("】");
+					var mitumori = Number(textlines[doinglinenum-1].substr(0,tasknamepos-13).replace(/(.*?)▶️/,""));
+					var kaishih = Number(textlines[doinglinenum-1].substr(tasknamepos-11,2));
+					var kaishim = Number(textlines[doinglinenum-1].substr(tasknamepos-8,2));
+					var shuuryouh = Number(textlines[doinglinenum-1].substr(tasknamepos-5,2));
+					var shuuryoum = Number(textlines[doinglinenum-1].substr(tasknamepos-2,2));
+					var jisseki = (shuuryouh*60+shuuryoum)-(kaishih*60+kaishim);
+					var sabun = 0;
+					if(mitumori-jisseki<0){
+					}else{
+						sabun = mitumori-jisseki;
+					};
+					textlines[doinglinenum-1] = "⏸"+jisseki+"m\/"+ textlines[doinglinenum-1].substr(0,tasknameend).replace("▶️","")+"（中断）"+textlines[doinglinenum-1].substr(tasknameend)+"\n◻️"+sabun+"m"+textlines[doinglinenum-1].substr(tasknamepos-0,tasknameend-tasknamepos)+"（再開）"+textlines[doinglinenum-1].substr(tasknameend);
+					
+					var startnamepos = textlines[startlinenum-1].indexOf("【");
+					textlines[startlinenum-1] = textlines[startlinenum-1].substr(0,startnamepos).replace("◻️","▶️")+" "+pluszero(shuuryouh)+":"+pluszero(shuuryoum)+"-"+textlines[startlinenum-1].substr(startnamepos);
+					textarea.value = textlines.join("\n");
+					var mitumoripos = textlines[startlinenum-1].substr(0,startnamepos-1);
+					var cursorpos = textarea.value.indexOf("▶️")+mitumoripos.length+8;
+					textarea.setSelectionRange(cursorpos ,cursorpos);
+				}
 			}
 		}
 	}else if(doing.test(textlines[startlinenum-1])==true){
@@ -293,7 +307,14 @@ function alltasktime(checkbox){
 		return alltasktime;
 	}
 }
-
+function keysposition(){
+	setInterval(function (){
+		var textarea = document.getElementById("textarea");
+		var keys = document.getElementById("keys");
+		var caretPosition = Measurement.caretPos(textarea);
+		keys.style.marginTop = (caretPosition.top-20)+"px";
+	},500);
+}
 //自動保存機能
 //テキストを定める
 //一定時間ごとに、テキストの変更があったかどうか確認する
@@ -301,6 +322,7 @@ setInterval(function (){
 	getNow();
 	var text = window.localStorage.getItem("textarea");
 	var newtext = document.getElementById("textarea").value;
+
 	if(text === newtext){
 		//同じなら何もしない
 	}else{
@@ -331,6 +353,7 @@ setInterval(function (){
 		}
 	}
 },2000);
+
 function doingtask(){
 	var textarea = document.getElementById('textarea');
 	var textdata = textData(textarea);
@@ -440,10 +463,11 @@ document.addEventListener('keydown', e => {
   e.target.setSelectionRange(slct.left, slct.right)
   return false
 })
-
+/*
 	window.addEventListener('scroll',function() {
 		var header = document.getElementById("header");
 		header.style.top = (window.pageYOffset)+"px";
 		var taskchute = document.getElementById("taskchute");
 		taskchute.style.top = (window.pageYOffset+50)+"px";
 	});
+*/
